@@ -395,7 +395,7 @@ class SimpleT5:
         trainer.fit(self.T5Model, self.data_module)
 
     def load_model(
-        self, model_type: str = "t5", model_dir: str = "outputs", use_gpu: bool = False
+        self, model_type: str = "t5", model_dir: str = "outputs", use_gpu: bool = False, use_auth_token: str = ""
     ):
         """
         loads a checkpoint for inferencing/prediction
@@ -405,8 +405,12 @@ class SimpleT5:
             use_gpu (bool, optional): if True, model uses gpu for inferencing/prediction. Defaults to True.
         """
         if model_type == "t5":
-            self.model = T5ForConditionalGeneration.from_pretrained(f"{model_dir}")
-            self.tokenizer = T5Tokenizer.from_pretrained(f"{model_dir}")
+            if use_auth_token != "":
+                self.model = T5ForConditionalGeneration.from_pretrained(f"{model_dir}", use_auth_token = use_auth_token)
+                self.tokenizer = T5Tokenizer.from_pretrained(f"{model_dir}", use_auth_token = use_auth_token)
+            else:
+                self.model = T5ForConditionalGeneration.from_pretrained(f"{model_dir}")
+                self.tokenizer = T5Tokenizer.from_pretrained(f"{model_dir}")
         elif model_type == "mt5":
             self.model = MT5ForConditionalGeneration.from_pretrained(f"{model_dir}")
             self.tokenizer = MT5Tokenizer.from_pretrained(f"{model_dir}")
